@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SensorServerApi
+{
+    public delegate void OnSensorStatus(SensorStatus sensorStatus);
+
+    interface ISensorServer
+    {
+        event OnSensorStatus OnSensorStatusEvent;
+        Task StartServer();
+        Task StopServer();
+        Task<Sensor> GetSensorById(Guid id);
+    }
+}
