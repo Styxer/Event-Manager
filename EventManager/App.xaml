@@ -1,9 +1,9 @@
-﻿<Application x:Class="EventManger.App"
+﻿<prism:PrismApplication x:Class="EventManager.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:EventManger"
-             StartupUri="MainWindow.xaml">
+	         xmlns:prism="http://prismlibrary.com/"
+             xmlns:local="clr-namespace:EventManager">
     <Application.Resources>
          
     </Application.Resources>
-</Application>
+</prism:PrismApplication>
