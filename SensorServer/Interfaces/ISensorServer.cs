@@ -8,7 +8,7 @@ namespace SensorServerApi
 {
     public delegate void OnSensorStatus(SensorStatus sensorStatus);
 
-    interface ISensorServer
+    public interface ISensorServer
     {
         event OnSensorStatus OnSensorStatusEvent;
         Task StartServer();

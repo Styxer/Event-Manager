@@ -2,9 +2,31 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:prism="http://prismlibrary.com/"
+        xmlns:region="clr-namespace:EventManager.Constants"
         prism:ViewModelLocator.AutoWireViewModel="True"
-        Title="{Binding Title}" Height="350" Width="525">
+        Title="Event Manager" 
+        Height="350"
+        Width="525"
+        Background="#1e273a"
+        >
     <Grid>
-        <ContentControl prism:RegionManager.RegionName="ContentRegion" />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Label 
+            Grid.ColumnSpan="2"
+            Content="Event Manager"
+            FontSize="30"
+            Foreground="White"/>
+
+        <ContentControl 
+            prism:RegionManager.RegionName
+                        ="{x:Static region:Region.ContentRegion }" />
     </Grid>
 </Window>

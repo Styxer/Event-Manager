@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SensorServerApi", "SensorSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManager", "EventManager\EventManager.csproj", "{754D185F-E4AD-4539-BB12-525CC65A747E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManager.Tests", "EventManager.Tests\EventManager.Tests.csproj", "{DF0D96A3-16AA-41A2-8383-E60599811C5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{754D185F-E4AD-4539-BB12-525CC65A747E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{754D185F-E4AD-4539-BB12-525CC65A747E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{754D185F-E4AD-4539-BB12-525CC65A747E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF0D96A3-16AA-41A2-8383-E60599811C5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF0D96A3-16AA-41A2-8383-E60599811C5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF0D96A3-16AA-41A2-8383-E60599811C5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF0D96A3-16AA-41A2-8383-E60599811C5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

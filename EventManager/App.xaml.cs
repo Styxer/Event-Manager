@@ -1,6 +1,7 @@
 ﻿using EventManager.Views;
 using Prism.Ioc;
 using Prism.Modularity;
+using SensorServerApi;
 using System.Windows;
 
 namespace EventManager
@@ -17,7 +18,12 @@ namespace EventManager
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            containerRegistry.Register<SensorDetailsWindow>();
+            containerRegistry.Register<SensorWindow>();
 
+            containerRegistry.Register<ICacheService>();
+            containerRegistry.Register<IIdEntity>();
+            containerRegistry.Register<ISensorServer>();
         }
     }
 }
