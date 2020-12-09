@@ -9,32 +9,21 @@
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
              xmlns:convertors="clr-namespace:EventManager.ValueConverters"
-             d:DesignHeight="450" d:DesignWidth="800"
-             
-             FontSize="60"
-             >
-
+             d:DesignHeight="450" 
+             d:DesignWidth="800">
     <UserControl.Resources>
         <convertors:StatusToColorConverter x:Key="StatusToColorConverter"/>
     </UserControl.Resources>
-
-
-    <materialDesign:Card
-        Background="#194466"
-        Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
+    
+    <Border
+        Background="{StaticResource CardColor}"
         Padding="8"
-        UniformCornerRadius="8">
-        <StackPanel Orientation="Horizontal">
-            <Label                      
-                Content="{Binding TODO,  FallbackValue=abc}"
-                Style="{StaticResource SensorHeader}"/>
-            <Separator Margin="50,0"/>
-            <Label 
-                Content="{Binding TODO, FallbackValue=abc}"
-                Foreground="{Binding TODO, Converter={StaticResource StatusToColorConverter}}"/>
-
-
-        </StackPanel>
-    </materialDesign:Card>
-
+        CornerRadius="8">
+        <TextBlock Style="{StaticResource Sensor}" >
+            <Run Text="{Binding TimeRecieved}"/>
+            <Run Text=" "/>
+            <Run Foreground="{Binding Path=StatusType, Converter={StaticResource StatusToColorConverter}}"
+                 Text="{Binding StatusType, FallbackValue=Status}"></Run>
+        </TextBlock>
+    </Border>
 </UserControl>

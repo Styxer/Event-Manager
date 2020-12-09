@@ -9,12 +9,7 @@ namespace EventManager.ViewModels
 {
     public class SensorViewModel : BindableBase
     {
-        private string fieldName;
-        public string PropertyName
-        {
-            get { return fieldName; }
-            set { SetProperty(ref fieldName, value); }
-        }
+      
 
         public SensorViewModel()
         {

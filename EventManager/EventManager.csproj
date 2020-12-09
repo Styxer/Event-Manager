@@ -57,6 +57,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Constants\Region.cs" />
+    <Compile Include="Models\SensorCollection.cs" />
+    <Compile Include="ValueConverters\NullToVisibillityConverter.cs" />
+    <Compile Include="ValueConverters\SelectedBorderConverter.cs" />
     <Compile Include="ValueConverters\StatusToColorConverter.cs" />
     <Compile Include="ViewModels\SensorDetailsViewModel.cs" />
     <Compile Include="ViewModels\SensorViewModel.cs" />
@@ -66,14 +69,6 @@
     <Compile Include="Views\SensorDetailsWindow.xaml.cs">
       <DependentUpon>SensorDetailsWindow.xaml</DependentUpon>
     </Compile>
-    <Page Include="Colors.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="LabelStyles.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Styles\Colors.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

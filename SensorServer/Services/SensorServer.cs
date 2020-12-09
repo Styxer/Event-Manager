@@ -66,6 +66,8 @@ namespace SensorServerApi
             }
         }
 
+       
+
         public Task StartServer()
         {
             _cancellationTokenSource = new CancellationTokenSource();

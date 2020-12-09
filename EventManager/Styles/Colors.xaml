@@ -2,10 +2,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:EventManager.Styles">
 
-    <Color x:Key="BackgroundColor ">#1e273a</Color>
-    <Color x:Key="CardColor">#1e273a</Color>
-    <Color x:Key="ColorOk">#FF90EE90</Color>
-    <Color x:Key="ColorError">#FFFF0000</Color>
-    <Color x:Key="NormalText">#FFF8F8FF</Color>
+    <SolidColorBrush x:Key="BackgroundColor ">#1E273A</SolidColorBrush>
+    <SolidColorBrush x:Key="CardColor">#194466</SolidColorBrush>
+    <SolidColorBrush x:Key="ColorOk">#FF90EE90</SolidColorBrush>
+    <SolidColorBrush x:Key="ColorError">#FFFF0000</SolidColorBrush>
+    <SolidColorBrush x:Key="NormalText">#FFF8F8FF</SolidColorBrush>
+    <SolidColorBrush x:Key="ScrollBar">#ADABAB</SolidColorBrush>
 
 </ResourceDictionary>

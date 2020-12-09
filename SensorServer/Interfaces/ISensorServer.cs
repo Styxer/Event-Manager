@@ -12,6 +12,8 @@ namespace SensorServerApi
     {
         event OnSensorStatus OnSensorStatusEvent;
         Task StartServer();
+
+
         Task StopServer();
         Task<Sensor> GetSensorById(Guid id);
     }

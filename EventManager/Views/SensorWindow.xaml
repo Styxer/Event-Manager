@@ -7,63 +7,89 @@
              mc:Ignorable="d" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:prism="http://prismlibrary.com/"
+             xmlns:valueConverters="clr-namespace:EventManager.ValueConverters"
              prism:ViewModelLocator.AutoWireViewModel="True"
-             d:DesignHeight="450" d:DesignWidth="800"
-             FontSize="60"
              >
-   
-        <materialDesign:Card
-            Background="#194466"
-            Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
-            Padding="8"
-            UniformCornerRadius="8">
+    <UserControl.Resources>
+        <valueConverters:SelectedBorderConverter x:Key="SelectedBorderConverter"/>
+        <valueConverters:StatusToColorConverter x:Key="StatusToColorConverter"/>
+    </UserControl.Resources>
 
-        <Grid >
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <!--Senor and its status-->
-            <StackPanel
-                Orientation="Horizontal" 
-                Grid.Row="0">
-                <Label
-                    Content="{Binding TODO, FallbackValue=abc}"
-                    Style="{StaticResource SensorHeader}"/>
-                <Label 
-                    Content="-"
-                    Style="{StaticResource SensorHeader}"/>
-                <Label 
-                    Content="{Binding TODO, FallbackValue=abc}"
-                    Style="{StaticResource SensorHeader}"/>
-            </StackPanel>
-
-            <!--Sensor event time recived-->
-            <StackPanel 
-                Orientation="Horizontal"
-                Grid.Row="1">
-                <Label 
-                    Content="{Binding TODO, FallbackValue=000}"
-                    Style="{StaticResource Sensor}"/>                       
-            </StackPanel>
-
-            <!--Sensor status-->
-            <StackPanel 
-                Orientation="Horizontal"
-                Grid.Row="2">
-                <Label 
-                    Content="Current Status:"
-                    Style="{StaticResource Sensor}"/>
-                <Label 
-                    Content="{Binding TODO, FallbackValue=000}"
-                    Style="{StaticResource Sensor}"/>
-            </StackPanel>
-
-        </Grid>
+    <Grid>
+        <Border
+            Background="{StaticResource CardColor}" 
+            Padding="8" 
+            CornerRadius="8" 
+            Style="{StaticResource BorderStyle}"
+            BorderThickness="2">
+            <Border.BorderBrush>
+                <MultiBinding 
+                    Converter="{StaticResource SelectedBorderConverter}"
+                    Mode="TwoWay" 
+                    UpdateSourceTrigger="PropertyChanged">
+                    <Binding
+                        RelativeSource="{RelativeSource AncestorType=Window}"
+                        Path="DataContext.SelectedSensor" />
+                    <Binding Path="CurrentSensor" />
+                </MultiBinding>
+            </Border.BorderBrush>
+            <Border.InputBindings>
+                <MouseBinding 
+                    MouseAction="LeftClick" 
+                    Command="{Binding DataContext.SelectSensorCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
+                    CommandParameter="{Binding CurrentSensor}"/>
+            </Border.InputBindings>
             
-         
-        </materialDesign:Card>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!--Senor and its status-->
+                <TextBlock Grid.Row="0" Style="{StaticResource SensorHeader}">
+                    <Run Text="{Binding CurrentSensor.Name, FallbackValue=Sensor}" />
+                    <Run Text=" - "/>
+                    <Run Text="{Binding FirstSensorStatus.StatusType, FallbackValue=Status}"></Run>
+                </TextBlock>
+
+                <!--Sensor event time recived-->
+                <TextBlock Grid.Row="1" Style="{StaticResource Sensor}">
+                    <Run Text="{Binding FirstSensorStatus.TimeStamp, FallbackValue=TimeStamp}"></Run>
+                </TextBlock>
+
+
+                <!--Sensor status-->
+                <TextBlock Grid.Row="2" Style="{StaticResource Sensor}">
+                    <Run Text="Current Status: " />
+                    <Run 
+                        Foreground="{Binding Path=FirstSensorStatus.StatusType, Converter={StaticResource StatusToColorConverter}}" 
+                        Text="{Binding FirstSensorStatus.StatusType, FallbackValue=Status}"></Run>
+                </TextBlock>
+
+            </Grid>
+        </Border>
+        
+        <!--Button-->
+        <Border 
+            HorizontalAlignment="Right" 
+            Margin="0,0,10,0" 
+            Style="{StaticResource BorderStyle}">
+            <Border.InputBindings>
+                <MouseBinding  
+                    MouseAction="LeftClick" 
+                    Command="{Binding DataContext.RemoveSensorCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
+                    CommandParameter="{Binding CurrentSensor}"/>
+            </Border.InputBindings>
+            <Viewbox Width="25" Height="25">
+                <Canvas Width="24" Height="24">
+                    <Path Fill="LightGreen" Data="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
+                </Canvas>
+            </Viewbox>
+        </Border>
+
+
+    </Grid>
 
 </UserControl>
