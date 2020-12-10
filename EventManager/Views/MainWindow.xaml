@@ -3,30 +3,65 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:prism="http://prismlibrary.com/"
         xmlns:region="clr-namespace:EventManager.Constants"
+        xmlns:views="clr-namespace:EventManager.Views"
+        xmlns:valueConverters="clr-namespace:EventManager.ValueConverters"
         prism:ViewModelLocator.AutoWireViewModel="True"
         Title="Event Manager" 
-        Height="350"
-        Width="525"
-        Background="#1e273a"
-        >
+        Height="360"
+        Width="640"
+        Background="{StaticResource BackgroundColor}"
+        x:Name="Windo">
+    <Window.Resources>
+        <valueConverters:NullToVisibillityConverter x:Key="NullToVisibillityConverter"/>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock
+                Margin="10"
+                Text="Event Manager"
+                Style="{StaticResource SensorHeader}"
+                FontSize="16"/>
+            <ScrollViewer Grid.Row="1" Template="{StaticResource ScrollViewerControlTemplate}">
+                <ItemsControl ItemsSource="{Binding SensorCollection}" BorderThickness="0">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <views:SensorWindow Margin="10,5"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+        <Grid Grid.Column="1" 
+              Visibility="{Binding SelectedSensor, Converter={StaticResource NullToVisibillityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="70"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock VerticalAlignment="Bottom" FontSize="16"
+                       Style="{StaticResource SensorHeader}" Margin="10,0,0,0">
+                <Run Text="{Binding SelectedSensor.CurrentSensor.Name, FallbackValue=Sensor}" />
+                <Run Text=" - "/>
+                <Run Text="{Binding SelectedSensor.FirstSensorStatus.StatusType, FallbackValue=Status}"></Run>
+            </TextBlock>
+            <ScrollViewer Grid.Row="1" Template="{StaticResource ScrollViewerControlTemplate}">
+                <ItemsControl ItemsSource="{Binding SelectedSensor.SensorEvents.EventAlarms}"
+                              BorderThickness="0">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <views:SensorDetailsWindow Margin="10,5"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
 
-        <Label 
-            Grid.ColumnSpan="2"
-            Content="Event Manager"
-            FontSize="30"
-            Foreground="White"/>
-
-        <ContentControl 
-            prism:RegionManager.RegionName
-                        ="{x:Static region:Region.ContentRegion }" />
     </Grid>
 </Window>
