@@ -29,9 +29,11 @@ namespace EventManager.Helpers
         public event EventHandler<SensorCollection> DeleteSensorEvent;
         public event EventHandler<SensorCollection> UpdateSensorEvent;
         public event EventHandler<SensorCollection> AddSensorEvent;
-        private static DispatcherTimer dispatcherTimer; 
+        private static DispatcherTimer dispatcherTimer;
         #endregion
-        public SensorHelper(ObservableCollection<SensorCollection> SensorCollection, ICacheService cacheService, ISensorServer sensorServer,  bool _useCache = true, Rate sensorServerRate = Rate.Easy)
+        #region Ctor
+        public SensorHelper(ObservableCollection<SensorCollection> SensorCollection
+            , ICacheService cacheService, ISensorServer sensorServer, bool _useCache = true, Rate sensorServerRate = Rate.Easy)
         {
             this.SensorCollection = SensorCollection;
             this.useCache = _useCache;
@@ -57,8 +59,10 @@ namespace EventManager.Helpers
                 .Subscribe(p => System.Diagnostics.Trace.WriteLine($"Progress {p}"));
             dispatcherTimer.Start();
         }
+        #endregion
 
 
+        #region Private function
         private async void dispatcherTimer_Tick(object sender, EventArgs e)
         {
             foreach (var sensors in this.SensorCollection)
@@ -112,7 +116,72 @@ namespace EventManager.Helpers
 
         }
 
+        private bool ApplayLogicFromIsAlarming(SensorType sensorType)
+        {
+            bool result = true;
 
+            if(sensorType == SensorType.Video || sensorType == SensorType.Fence || sensorType == SensorType.AccessControl 
+                || sensorType == SensorType.FireDetection || sensorType == SensorType.Radar)
+            {
+                result = false;
+            }
+
+            return result;
+        }
+
+        private bool IsSpecialSensorAlarming(SensorType sensorType, StatusType statusType)
+        {
+            bool result = false;
+
+            if (sensorType == SensorType.Video)
+            {
+                if (statusType == StatusType.Alarm || statusType == StatusType.Disconnected)
+                    result = true;
+            }
+            else if(sensorType == SensorType.Fence)
+            {
+                if (statusType == StatusType.Alarm || statusType == StatusType.Disconnected || statusType == StatusType.Off)
+                    result = true;
+            }
+            else if (sensorType == SensorType.AccessControl)
+            {
+                if (statusType == StatusType.Alarm || statusType == StatusType.Disconnected || statusType == StatusType.On)
+                    result = true;
+            }
+            else if (sensorType == SensorType.FireDetection)
+            {
+                if (statusType != StatusType.Default)
+                    result = true;
+            }
+            else if (sensorType == SensorType.Radar)
+            {
+                if (statusType == StatusType.Alarm  || statusType == StatusType.Off)
+                    result = true;
+            }
+
+            return result;
+        }
+
+        private bool IsSensorAlarming(Sensor sensor, SensorStatus sensorStatus)
+        {
+            bool result = false;
+
+            bool readFromAlarming =  ApplayLogicFromIsAlarming(sensor.SensorType);
+
+            if (readFromAlarming)
+                result = sensorStatus.IsAlarmStatus;
+
+            else
+                result = IsSpecialSensorAlarming(sensor.SensorType, sensorStatus.StatusType);
+
+            return result;
+        }
+
+
+        #endregion
+
+
+        #region Public function
         public void AddEvent(Sensor result, SensorStatus sensorStatus)
         {
             InvokerHelper.RunSave(async () =>
@@ -121,52 +190,64 @@ namespace EventManager.Helpers
                 SensorCollection currentSensorCollection;
 
                 bool event_exist = false;
-                foreach (var sensor in SensorCollection)
+                //foreach (var sensor in SensorCollection)
+                //{
+                //    if (result.Id == sensor.CurrentSensor.Id)
+                //    {
+                //        event_exist = true;
+                //        break;
+                //    }
+                //}
+                Parallel.ForEach(SensorCollection, (sensor, state) =>
                 {
                     if (result.Id == sensor.CurrentSensor.Id)
                     {
                         event_exist = true;
-                        break;
+                        state.Stop();
                     }
-                }
+                });
 
-                if (event_exist)
+                if (IsSensorAlarming(result, sensorStatus))
                 {
-                    currentSensorCollection = SensorCollection.FirstOrDefault(t => t.CurrentSensor.Id == result.Id);
-                    if (currentSensorCollection != null)
+                    if (event_exist)
                     {
-                        bool update = await cacheService.UpdateEntity(currentSensorCollection.CurrentSensor);
-                        if (update)
+                        currentSensorCollection = SensorCollection.FirstOrDefault(t => t.CurrentSensor.Id == result.Id);
+                        if (currentSensorCollection != null)
                         {
-                            currentSensorCollection.SensorEvents.EventAlarms?.
-                            Add(new EventAlarm(sensorStatus));
+                            bool canUpdate = await cacheService.UpdateEntity(currentSensorCollection.CurrentSensor);
+                            if (canUpdate)
+                            {
+                                currentSensorCollection.SensorEvents.EventAlarms?.
+                                Add(new EventAlarm(sensorStatus));
 
-                            UpdateSensorEvent?.
-                            Invoke(null, currentSensorCollection);
+                                UpdateSensorEvent?.
+                                Invoke(null, currentSensorCollection);
 
+                            }
                         }
                     }
-                }
-                else
-                {
-                    currentSensorCollection = new SensorCollection()
+                    else
                     {
-                        CurrentSensor = result,
-                        FirstSensorStatus = sensorStatus,
-                        SensorEvents = new Event() { EventAlarms = new List<EventAlarm>() { new EventAlarm(sensorStatus) } }
-                    };
+                        currentSensorCollection = new SensorCollection()
+                        {
+                            CurrentSensor = result,
+                            FirstSensorStatus = sensorStatus,
+                            SensorEvents = new Event() { EventAlarms = new List<EventAlarm>() { new EventAlarm(sensorStatus) } }
+                        };
 
-                    bool save = await cacheService.AddEntity(currentSensorCollection.CurrentSensor);
-                    if (save)
-                    {
-                        if (sensorStatus.StatusType == StatusType.Alarm)
-                            SensorCollection.Add(currentSensorCollection);
-                        else
-                            SensorCollection.Insert(0, currentSensorCollection);
-                        AddSensorEvent?.
-                        Invoke(null, currentSensorCollection);
-                    }
+                        bool canSave = await cacheService.AddEntity(currentSensorCollection.CurrentSensor);
+                        if (canSave)
+                        {
 
+                            if (sensorStatus.StatusType == StatusType.Alarm)
+                                SensorCollection.Add(currentSensorCollection);
+                            else
+                                SensorCollection.Insert(0, currentSensorCollection);
+                            AddSensorEvent?.
+                            Invoke(null, currentSensorCollection);
+                        }
+
+                    } 
                 }
 
             });
@@ -182,7 +263,8 @@ namespace EventManager.Helpers
                     All(i => SensorCollection.Remove(i));
             }
 
-        }
+        } 
+        #endregion
 
     }
 }
